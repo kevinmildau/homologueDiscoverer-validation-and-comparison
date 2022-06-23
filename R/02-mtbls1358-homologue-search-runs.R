@@ -2,12 +2,11 @@
 #' Running homologue identifiers packages on mtbls1358 data for output
 #' comparison.
 #'
-#' Author: Kevin Mildau, 2022 June
-#'
-#' Description:
+#' Author: Kevin Mildau
+#' Date: 2022 June
 ################################################################################
 
-# Load Packages & data #########################################################
+# Load Packages & data ---------------------------------------------------------
 library(devtools)
 library(homologueDiscoverer)
 library(nontarget)
@@ -16,7 +15,7 @@ prefix <- "output/"
 source("R/00-utils-validation-and-comparison.R")
 data("isotopes") # required for nontarget, from enviPat
 
-# Load peak tables
+# Load peak tables--------------------------------------------------------------
 mtbls1358_hd <- readRDS(paste0(prefix, "mtbls1358_hd.RDS"))
 mtbls1358_nt <- readRDS(paste0(prefix, "mtbls1358_nt.RDS"))
 mtbls1358_index <- readRDS(paste0(prefix, "mtbls1358_index.RDS"))
@@ -40,14 +39,14 @@ out_hd <- detectHomologues(mtbls1358_hd,
                            search_mode = "untargeted",
                            step_mode = "increment")
 
-# Save output ##################################################################
+# Save output ------------------------------------------------------------------
 saveRDS(object = out_nt_ptb,
         file = paste0(prefix, "mtbls1358_out_nontarget.RDS"))
 saveRDS(object = out_hd,
         file = paste0(prefix, "mtbls1358_out_homologueDiscoverer.RDS"))
 
 
-# Additional nontarget runs for comparisons ####################################
+# Additional nontarget runs for comparisons ------------------------------------
 outnt_rttol_1 <-
   nontarget::homol.search(peaklist = mtbls1358_nt, isotopes, FALSE,
                           minmz = 13, maxmz = 15, mztol = 10,

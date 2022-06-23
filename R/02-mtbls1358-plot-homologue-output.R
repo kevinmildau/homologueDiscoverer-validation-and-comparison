@@ -1,12 +1,11 @@
 ################################################################################
 #' Plotting homologueDiscoverer & nontarget output on mtbls1358 data.
 #'
-#' Author: Kevin Mildau, 2022 June
-#'
-#' Description:
+#' Author: Kevin Mildau
+#' Date: 2022 June
 ################################################################################
 
-# Load Packages & data #########################################################
+# Load Packages & data ---------------------------------------------------------
 library(devtools)
 library(homologueDiscoverer)
 prefix <- "output/"
@@ -17,8 +16,7 @@ mtbls1358_out_hd <-
 mtbls1358_out_nt <-
   readRDS(paste0(prefix, "mtbls1358_out_nontarget.RDS"))
 
-# Plot Annotated Peak Table ####################################################
-
+# Plot Annotated Peak Table ----------------------------------------------------
 p <- plotAnnotatedStatic(mtbls1358_out_hd) +
   ggtitle("homologueDiscoverer Annotated Peak Table - MTBLS1358 Data")
 ggsave(plot = p,
@@ -30,7 +28,7 @@ p <- plotAnnotatedStatic(mtbls1358_out_nt) +
 ggsave(plot = p, filename = paste0(prefix, "mtbls1358_out_nontarget_aptb.pdf"),
        device = "pdf", width = 20, height = 12, units = "cm", dpi = 300)
 
-# Multiple assignment plotting #################################################
+# Multiple assignment plotting -------------------------------------------------
 mtbls1358_out_nt %>%
   mutate(., n_assignments = as.factor(n_assignments)) %>%
   select(., peak_id, n_assignments) %>%

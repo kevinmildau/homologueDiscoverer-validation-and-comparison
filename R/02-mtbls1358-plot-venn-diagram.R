@@ -2,16 +2,16 @@
 #' Plotting comparative venn diagrams for nontarget and homologueDiscoverer on
 #' mtbls1358 data.
 #'
-#' Author: Kevin Mildau, 2022 June
-#'
-#' Description:
+#' Author: Kevin Mildau
+#' Date: 2022 June
 ################################################################################
 
-# Load Packages & data #########################################################
+# Load Packages & data ---------------------------------------------------------
 library(devtools)
 library(homologueDiscoverer)
 prefix <- "output/"
 source("R/00-utils-validation-and-comparison.R")
+
 # Load annotated peak tables
 out_hd <-
   readRDS(paste0(prefix, "mtbls1358_out_homologueDiscoverer.RDS"))
@@ -20,9 +20,7 @@ out_nt_01 <- readRDS(paste0(prefix, "mtbls1358_out_nontarget_01.RDS"))
 out_nt_02 <- readRDS(paste0(prefix, "mtbls1358_out_nontarget_02.RDS"))
 out_nt_03 <- readRDS(paste0(prefix, "mtbls1358_out_nontarget_03.RDS"))
 
-# Plot Annotated Peak Table ###########################################
-
-# Exact Series Overlap between diff. nontarget runs and homologueDiscoverer
+# Exact Series Overlap between nontarget runs and homologueDiscoverer ----------
 pdf(file = paste0(prefix, "mtbls1358_out_venn_series.pdf"), family = "Helvetica",
     title = "R Graphics Output", fonts = NULL, width = 10, height = 6)
 display_venn(list("HD" = createSeriesStrings(out_hd),
@@ -37,7 +35,7 @@ display_venn(list("HD" = createSeriesStrings(out_hd),
              cat.dist = c(0.055, 0.1, 0.1, 0.1,0.1))
 dev.off()
 
-# Annotated peak overlap between diff. nontarget runs and homologueDiscoverer
+# Annotated peak overlap between nontarget runs and homologueDiscoverer --------
 pdf(file = paste0(prefix, "mtbls1358_out_venn_peaks.pdf"), family = "Helvetica",
     title = "R Graphics Output", fonts = NULL, width = 10, height = 6)
 display_venn(list(HD = createAnnotedPeakIdList(out_hd),
@@ -53,7 +51,7 @@ display_venn(list(HD = createAnnotedPeakIdList(out_hd),
 dev.off()
 
 
-# Plot multiple assignments for different runs #################################
+# Plot multiple assignments for different runs ---------------------------------
 out_nt_01 %>%
   mutate(., n_assignments = as.factor(n_assignments)) %>%
   select(., peak_id, n_assignments) %>%
@@ -85,8 +83,6 @@ out_nt_02 %>%
   geom_text(stat='count', aes(label=..count..), vjust=-1, size = 2)
 ggsave(paste0(prefix, "mtbls1358-multiple-assignments-rttol-1.pdf"), device = "pdf",
        width = 30, height = 16, units = "cm", dpi = 300)
-
-
 
 out_nt_03 %>%
   mutate(., n_assignments = as.factor(n_assignments)) %>%
