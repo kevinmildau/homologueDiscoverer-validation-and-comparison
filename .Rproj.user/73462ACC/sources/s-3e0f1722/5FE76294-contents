@@ -2,7 +2,7 @@
 #' Helper functions for plotting and nontarget output processing.
 #'
 #' Author: Kevin Mildau
-#' Date: 2022-06-23
+#' Date: 2022 June
 ################################################################################
 
 #' plotAnnotatedStatic

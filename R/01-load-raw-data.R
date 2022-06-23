@@ -1,22 +1,24 @@
 ################################################################################
 #' Loading and pre-processing data for validation and comparison.
 #'
-#' Author: Kevin Mildau, 2022 June
+#' Author: Kevin Mildau
+#' Date: 2022 June
 #'
 #' Description:
-#' --> Load PEG Data
 #' --> Load mtbls1358 data
 #' --> Load yeast data
+#' --> Load PEG Data
+#'
 #' For each dataset, create a peak table as expected by homologueDiscoverer and
-#' nontarget.
+#' nontarget & save for later use.
 ################################################################################
+# Load packages and utils
 library("dplyr")
 library("tibble")
 library("readr")
 library("homologueDiscoverer")
 prefix <- "output/"
 source("R/00-utils-validation-and-comparison.R")
-
 
 # MTBLS Data Loading ###########################################################
 # Read and convert to tibble
