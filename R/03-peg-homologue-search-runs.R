@@ -2,12 +2,11 @@
 #' Running homologue identifiers packages on peg data for validation and
 #' output comparison.
 #'
-#' Author: Kevin Mildau, 2022 June
-#'
-#' Description:
+#' Author: Kevin Mildau
+#' Date: 2022 June
 ################################################################################
 
-# Load Packages & data #########################################################
+# Load Packages & data ---------------------------------------------------------
 library(devtools)
 library(homologueDiscoverer)
 library(nontarget)
@@ -25,28 +24,28 @@ peg70_joined <- readRDS(paste0(prefix, "peg70_joined.RDS"))
 peg70_joined_hd <- readRDS(paste0(prefix, "peg70_joined_hd.RDS"))
 peg70_joined_nt <- readRDS(paste0(prefix, "peg70_joined_nt.RDS"))
 
-# Homologue Identifier Runs ####################################################
-# rsidentifier
-out_rs_peg17 <- rsidentifier::detectHomologues(peg17_joined_hd,
-                                                 mz_min = 5, mz_max = 100,
-                                                 rt_min = 0.1, rt_max = 100,
-                                                 min_series_length = 4,
-                                                 ppm_tolerance = 20,
-                                                 search_mode = "untargeted",
-                                                 step_mode = "increment")
+# Homologue Identifier Runs ----------------------------------------------------
+# homologueDiscoverer
+out_rs_peg17 <- detectHomologues(peg17_joined_hd,
+                                 mz_min = 5, mz_max = 100,
+                                 rt_min = 0.1, rt_max = 100,
+                                 min_series_length = 4,
+                                 ppm_tolerance = 20,
+                                 search_mode = "untargeted",
+                                 step_mode = "increment")
 
 out_rs_peg17 <-
   left_join(out_rs_peg17,
             select(peg17_joined, c("peak_id", "peg", "mix", "plasma")),
             by = c("peak_id"))
 
-out_rs_peg70 <- rsidentifier::detectHomologues(peg70_joined_hd,
-                                                 mz_min = 5, mz_max = 100,
-                                                 rt_min = 0.1, rt_max = 100,
-                                                 min_series_length = 4,
-                                                 ppm_tolerance = 20,
-                                                 search_mode = "untargeted",
-                                                 step_mode = "increment")
+out_rs_peg70 <- detectHomologues(peg70_joined_hd,
+                                 mz_min = 5, mz_max = 100,
+                                 rt_min = 0.1, rt_max = 100,
+                                 min_series_length = 4,
+                                 ppm_tolerance = 20,
+                                 search_mode = "untargeted",
+                                 step_mode = "increment")
 out_rs_peg70 <-
   left_join(out_rs_peg70,
             select(peg70_joined, c("peak_id", "peg", "mix", "plasma")),

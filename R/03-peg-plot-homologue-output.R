@@ -1,12 +1,11 @@
 ################################################################################
 #' Plotting homologueDiscoverer & nontarget output on peg data.
 #'
-#' Author: Kevin Mildau, 2022 June
-#'
-#' Description:
+#' Author: Kevin Mildau
+#' Date: 2022 June
 ################################################################################
 
-# Load Packages & data #########################################################
+# Load Packages & data ---------------------------------------------------------
 library(devtools)
 library(homologueDiscoverer)
 prefix <- "output/"
@@ -19,7 +18,7 @@ peg17_nt <- readRDS(paste0(prefix, "peg17_out_nt.RDS"))
 peg70_nt <- readRDS(paste0(prefix, "peg70_out_nt.RDS"))
 
 
-# Plot Annotated Peak Table ####################################################
+# Plot Annotated Peak Table ----------------------------------------------------
 
 p <- plotAnnotatedStatic(peg17_hd, max_legend = 0) +
   ggtitle("homologueDiscoverer Annotated Peak Table - PEG17 Data")
@@ -41,7 +40,7 @@ p <- plotAnnotatedStatic(peg70_nt, max_legend = 0) +
 ggsave(plot = p, filename = paste0(prefix, "peg70_out_nontarget_aptb.pdf"),
        device = "pdf", width = 20, height = 12, units = "cm", dpi = 300)
 
-# Venn Plotting ################################################################
+# Venn Plotting ----------------------------------------------------------------
 ids_1 <- peg17_hd %>% filter(., !is.na(homologue_id) & plasma ) %>% pull(., peak_id) # plasma homologues
 ids_2 <- peg17_hd %>% filter(., !is.na(homologue_id) & peg ) %>% pull(., peak_id)    # peg homologues
 ids_3 <- peg17_hd %>% filter(., !is.na(homologue_id) & mix ) %>% pull(., peak_id)    # mix homologues
@@ -115,7 +114,7 @@ display_venn(x,              lwd = 2, lty = 'blank',
              cat.dist = c(-0.05, 0.1, 0.1))
 dev.off()
 
-# Comparing HD and NT ##########################################################
+# Comparing HD and NT ----------------------------------------------------------
 # Peaks
 ids_1 <- peg17_hd %>% filter(., !is.na(homologue_id)) %>% pull(., peak_id)
 ids_2 <- peg17_nt %>% filter(., !is.na(homologue_id)) %>% pull(., peak_id)
@@ -158,41 +157,7 @@ pdf(file = paste0(prefix, "peg70_out_comparison_series.pdf"), family = "Helvetic
 display_venn(x, fill = c( "#E69F00", "#56B4E9"))
 dev.off()
 
-# Visualize multiple assignment of nontarget ###################################
-nass <- peg17_nt %>%
-  select(., peak_id, n_assignments) %>%
-  unique() %>%
-  pull(n_assignments)
-
-pdf(file = paste0(prefix, "peg17_hist.pdf"), family = "Helvetica",
-    fonts = NULL, width = 10, height = 6)
-hist(nass,
-     main = "Histogramm of number of series assignments per peak by Nontarget on PEG17 Data")
-dev.off()
-
-pdf(file = paste0(prefix, "peg17_hist_limited.pdf"), family = "Helvetica",
-    fonts = NULL, width = 10, height = 6)
-hist(nass, ylim = c(0,50),
-     main = "Histogramm of number of series assignments per peak by Nontarget on Peg17 Data (y-axis limited)")
-dev.off()
-
-nass <- peg70_nt %>%
-  select(., peak_id, n_assignments) %>%
-  unique() %>%
-  pull(n_assignments)
-
-pdf(file = paste0(prefix, "peg70_hist.pdf"), family = "Helvetica",
-    fonts = NULL, width = 10, height = 6)
-hist(nass,
-     main = "Histogramm of number of series assignments per peak by Nontarget on PEG70 Data")
-dev.off()
-
-pdf(file = paste0(prefix, "peg70_hist_limited.pdf"), family = "Helvetica",
-    fonts = NULL, width = 10, height = 6)
-hist(nass, ylim = c(0,50),
-     main = "Histogramm of number of series assignments per peak by Nontarget on Peg70 Data (y-axis limited)")
-dev.off()
-
+# Visualize multiple assignment of nontarget -----------------------------------
 peg17_nt %>%
   mutate(., n_assignments = as.factor(n_assignments)) %>%
   select(., peak_id, n_assignments) %>%
