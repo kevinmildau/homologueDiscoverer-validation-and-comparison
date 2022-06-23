@@ -2,14 +2,11 @@
 #' Running homologue identifiers packages on yeast data to find decrementing
 #' homologue series.
 #'
-#' Author: Kevin Mildau, 2022 June
-#'
-#' Description:
-#' --> Run nontarget::homol search on yeast data.
-#' --> Run homologueDiscoverer on yeast data.
+#' Author: Kevin Mildau
+#' Date: 2022 June
 ################################################################################
 
-# Load Packages & data #########################################################
+# Load Packages & data ---------------------------------------------------------
 library(devtools)
 library(nontarget)
 library(enviPat)
@@ -23,7 +20,7 @@ yeast_hd <- readRDS(paste0(prefix, "yeast_hd.RDS"))
 yeast_nt <- readRDS(paste0(prefix, "yeast_nt.RDS"))
 yeast_index <- readRDS(paste0(prefix, "yeast_index.RDS"))
 
-# Run nontarget for decrementing series ########################################
+# Run nontarget for decrementing series ----------------------------------------
 outnt01 <- nontarget::homol.search(peaklist = yeast_nt, isotopes, FALSE,
                                    minmz = 10, maxmz = 50, mztol = 5,
                                    minrt = -100, maxrt = 0.1, # for decrement
@@ -38,7 +35,7 @@ outnt01_ptb <- left_join(outnt01_ptb, yeast_index, by = c("mz", "rt"))
 saveRDS(object = outnt01_ptb,
         file = paste0(prefix, "yeast_out_nontarget_decrement.RDS"))
 
-# Run homologueDiscoverer for decrementing and incrementing series each ########
+# Run homologueDiscoverer for decrementing and incrementing series each --------
 outrs01 <- detectHomologues(yeast_hd,
                             mz_min = 10, mz_max = 50,
                             rt_min = 0.1, rt_max = 100,
