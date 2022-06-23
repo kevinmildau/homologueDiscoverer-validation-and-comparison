@@ -1,12 +1,22 @@
-plotAnnotatedStatic <- function(annotated, max_legend = 100){
+################################################################################
+#' Helper functions for plotting and nontarget output processing.
+#'
+#' Author: Kevin Mildau
+#' Date: 2022-06-23
+################################################################################
+
+#' plotAnnotatedStatic
+#'
+#' Function creates static annotated peak table plot for the publication.
+#'
+#' @param annotated An annotated peak table as created by detectHomologues()
+#' @param legend_setting A legend placement setting. Options are "none", "bottom", "left" etc.
+#'
+#' @return A ggplot object.
+plotAnnotatedStatic <- function(annotated, legend_setting = "none"){
   annotated <- mutate(annotated,
                       homologue_id = if_else(is.na(homologue_id), 0L, homologue_id),
                       homologue_id = as.factor(homologue_id))
-  if (length(unique(annotated$homologue_id)) > max_legend) {
-    legend_setting = "none"
-  } else {
-    legend_setting = "right"
-  }
   colourCount = length(unique(annotated$homologue_id))
   getPalette = colorRampPalette(RColorBrewer::brewer.pal(9, "Set1"))
   ncolor = length(unique(annotated$homologue_id))
@@ -25,8 +35,9 @@ plotAnnotatedStatic <- function(annotated, max_legend = 100){
     ylab("Mass to Charge Ratio") +
     #coord_cartesian(xlim = ranges$x, ylim = ranges$y, expand = FALSE) +
     theme(legend.position=legend_setting, text = element_text(family="mono"))
-  return(g) # use with # ggsave("test.pdf", device = "pdf", width = 20, height = 12, units = "cm", dpi = 300)
+  return(g)
 }
+# use with # ggsave("test.pdf", device = "pdf", width = 20, height = 12, units = "cm", dpi = 300)
 # Usage Example:
 # annotated <- readRDS("example-runs/flasch-msdial-results.rds")
 # g <- plotAnnotatedStatic(annotated)
@@ -34,17 +45,19 @@ plotAnnotatedStatic <- function(annotated, max_legend = 100){
 # ggsave(plot = g, "test.pdf", device = "pdf", width = 20, height = 12, units = "cm", dpi = 300)
 
 
+#' plotNontarget (Shiny Interactive Plot)
+#'
+#' Function created to plot pseudo-annotated peak tables of nontarget. In these pseudo tables it is highly likely that single peaks have multiple series membership. For visualization, peaks with multiple assignments are duplicated as many times as there are series going through them. In this nontarget plot, all peaks with multiple assignments are highlighted.
+#'
+#' @param annotated_peak_table pseudo peak table as created by custom post-processing of nontarget objects using createPseudoPeakTableFromNonTarget()
+#'
+#' @return None. Shiny app is opened.
 plotNontarget <- function(annotated_peak_table) {
-  #require(Cairo)   # For nicer ggplot2 output when deployed on Linux
   annotated_peak_table <- mutate(annotated_peak_table,
                                  homologue_id = if_else(is.na(homologue_id), 0L, homologue_id),
                                  homologue_id = as.factor(homologue_id),
                                  n_assignments = as.factor(n_assignments))
-  if (length(unique(annotated_peak_table$homologue_id)) > 100) {
-    legend_setting = "none"
-  } else {
-    legend_setting = "right"
-  }
+  legend_setting = "none"
   colourCount = length(unique(annotated_peak_table$homologue_id))
   getPalette = colorRampPalette(RColorBrewer::brewer.pal(9, "Set1"))
   ncolor = length(unique(annotated_peak_table$homologue_id))
@@ -94,6 +107,13 @@ plotNontarget <- function(annotated_peak_table) {
   shinyApp(ui, server)
 }
 
+#' createPseudoPeakTableFromNonTarget
+#'
+#' Helper function processes nontarget output into a pseudo-peak table. Nontarget output often produces multiple series assignments per peak. In order to facilitate plotting, all peaks with multiple assignments are duplicated as often as there are conflicting assignments. The resulting peak table thus contains redundant peaks, yet each with a different series assignment. Output is created in format compatible with homologueDiscoverer::ptbPlotInteractive()
+#'
+#' @param nontarget_out Output of homologue search run by nontarget.
+#'
+#' @return A pseudo-peak table (tibble) compatible with homologueDiscoverer::ptbPlotInteractive()
 createPseudoPeakTableFromNonTarget <- function(nontarget_out){
   peak_table <- as_tibble(nontarget_out$`Peaks in homologue series`)
   names(peak_table) <- stringr::str_replace_all(names(peak_table), " |/", "_")
@@ -102,8 +122,6 @@ createPseudoPeakTableFromNonTarget <- function(nontarget_out){
   peak_table <- peak_table %>%
     mutate(., series_ids = str_split(HS_cluster, pattern = "/")) %>%
     unnest(., series_ids)
-
-
 
   peak_table <- peak_table %>%
     rename(., mz = mz, rt = RT, homologue_id = series_ids, nontarget_peak_id = peak_ID) %>%
@@ -126,6 +144,14 @@ createPseudoPeakTableFromNonTarget <- function(nontarget_out){
 }
 
 
+#' display_venn
+#'
+#' Wrapper function around VennDiagram plot function which deactivates automatic logging and writing to file.
+#'
+#' @param VennDiagram input list, see ??VennDiagram
+#' @param ... Additional VennDiagram inputs, see ??VennDiagram
+#'
+#' @return None. Plots the Venn diagram in RStudio session.
 display_venn <- function(x, ...){
   library(VennDiagram)
   grid.newpage()
@@ -133,6 +159,13 @@ display_venn <- function(x, ...){
   grid.draw(venn_object)
 }
 
+#' createSeriesStrings
+#'
+#' Functions takes all peak_ids belonging to each homologue_id in the peak_table and turns them into strings of the following type: "peak_id_1-->peak_id2-->peak_id_3...". These strings are used for exact series matching comparison.
+#'
+#' @param out Annotated peak table for which to create series strings.
+#'
+#' @return Vector with series strings (character)
 createSeriesStrings <- function(out){
   summary <- out %>%
     na.omit(.) %>%
@@ -143,6 +176,13 @@ createSeriesStrings <- function(out){
   return(strings)
 }
 
+#' createAnnotedPeakIdList
+#'
+#' Function extracts all unqiue peak_id's which have been annotated to belong to a homologue series from a provided annotated peak table.
+#'
+#' @param out  Annotated peak table from which to extract annotated peak_ids
+#'
+#' @return A vector of peak_ids (int).
 createAnnotedPeakIdList<- function(out){
   ids <- out %>%
     na.omit(.) %>%
