@@ -18,8 +18,10 @@ sdbrs <- sdbPush(sdbrs, yeast_02)
 
 # Plot Static ------------------------------------------------------------------
 # Run annotation run on raw yeast data to generate annotated peak table
-yeast_anno <- annotateHomologues(yeast, sdbrs, rt_tolerance = 5,
-                                 ppm_tolerance = 5, step_tolerance = 5,
+yeast_anno <- annotateHomologues(yeast, sdbrs,
+                                 rt_tolerance = 5,
+                                 ppm_matching_tolerance = 5,
+                                 ppm_step_tolerance =  5,
                                  min_match_length = 4)
 p <- plotAnnotatedStatic(yeast_anno) +
   ggtitle("homologueDiscoverer Annotated Peak Table - Yeast Data")

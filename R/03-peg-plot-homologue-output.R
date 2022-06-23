@@ -20,22 +20,22 @@ peg70_nt <- readRDS(paste0(prefix, "peg70_out_nt.RDS"))
 
 # Plot Annotated Peak Table ----------------------------------------------------
 
-p <- plotAnnotatedStatic(peg17_hd, max_legend = 0) +
+p <- plotAnnotatedStatic(peg17_hd, legend_setting = "none") +
   ggtitle("homologueDiscoverer Annotated Peak Table - PEG17 Data")
 ggsave(plot = p, filename = paste0(prefix, "peg17_out_homologueDiscoverer_aptb.pdf"),
        device = "pdf", width = 20, height = 12, units = "cm", dpi = 300)
 
-p <- plotAnnotatedStatic(peg70_hd, max_legend = 0) +
+p <- plotAnnotatedStatic(peg70_hd, legend_setting = "none") +
   ggtitle("homologueDiscoverer Annotated Peak Table - PEG70 Data")
 ggsave(plot = p, filename = paste0(prefix, "peg70_out_homologueDiscoverer_aptb.pdf"),
        device = "pdf", width = 20, height = 12, units = "cm", dpi = 300)
 
-p <- plotAnnotatedStatic(peg17_nt, max_legend = 0) +
+p <- plotAnnotatedStatic(peg17_nt, legend_setting = "none") +
   ggtitle("Nontarget Annotated Peak Table - PEG17 Data")
 ggsave(plot = p, filename = paste0(prefix, "peg17_out_nontarget_aptb.pdf"),
        device = "pdf", width = 20, height = 12, units = "cm", dpi = 300)
 
-p <- plotAnnotatedStatic(peg70_nt, max_legend = 0) +
+p <- plotAnnotatedStatic(peg70_nt, legend_setting = "none") +
   ggtitle("Nontarget Annotated Peak Table - PEG70 Data")
 ggsave(plot = p, filename = paste0(prefix, "peg70_out_nontarget_aptb.pdf"),
        device = "pdf", width = 20, height = 12, units = "cm", dpi = 300)
